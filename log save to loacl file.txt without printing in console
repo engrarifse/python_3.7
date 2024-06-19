@@ -1,0 +1,45 @@
+from csv import reader
+import sys
+
+# open a target CSV  file in read mode
+with open('1000Hz - TESCON-8A0572.csv', 'r') as read_obj:
+    csv_reader = reader(read_obj, delimiter=';')
+
+
+# skip header
+    next(csv_reader)
+    next(csv_reader)
+    previous_value = None
+    expected_next_value = None
+    i = 3
+
+# Iterate over each row in the csv using reader object
+    for row in csv_reader:
+        # row variable is a list that represents a row in csv
+        # store value of first column (after timestamp)
+        col1 = row[1]
+
+        if (previous_value == None or previous_value == 999):
+            expected_next_value = 0
+        else:
+            expected_next_value = previous_value + 1
+
+        # Check Column 1
+        if (previous_value != None):
+            if (int(col1) != expected_next_value):
+                #print("FIRSTError: Column 1 in line " + str(i))
+                f.write("FIRSTError: Column 1 in line " + str(i) + "\n")
+
+        # Check all remaining columns
+        if (previous_value != None):
+            for j, column in enumerate(row[2:-1]):
+                if (int(column) != previous_value+1):
+                    #print("Error: Column" + str(j) + " in line " + str(i))
+                    #sys.stdout = original_stdout
+                    f.write("Error: Column" + str(j) + " in line " + str(i) + "\n")
+
+
+        previous_value = int(col1)
+        i = i + 1
+
+    print(datetime.now() - startTime)
